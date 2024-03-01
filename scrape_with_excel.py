@@ -1,8 +1,11 @@
+import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 
 # Function to scrape data from the website
 def scrape_website(keywords1, keywords2):
+    data = []  # List to store scraped data
+    
     # Create a new session object
     session = requests.Session()
     
@@ -36,11 +39,19 @@ def scrape_website(keywords1, keywords2):
                     if not page_link.startswith("http"):
                         page_link = "https://etenders.gov.in" + page_link
                         
-                    # Call function to scrape data from organization's page
-                    scrape_organization_page(session, organization_name, page_link, keywords2)
+                    # Call function to scrape data from organization's page and append to data list
+                    data.extend(scrape_organization_page(session, organization_name, page_link, keywords2))
+                    
+    # Create DataFrame from the scraped data
+    df = pd.DataFrame(data, columns=["Organization", "e-Published Date", "Closing Date", "Opening Date", "Title/Ref.No./Tender ID", "Title/Ref.No./Tender ID Link", "Organisation Chain"])
+    
+    # Save DataFrame to Excel file
+    df.to_excel("scraped_data.xlsx", index=False)
 
 # Function to scrape data from the organization page
 def scrape_organization_page(session, organization_name, link, keywords):
+    data = []  # List to store scraped data
+    
     # Send a request to the organization page using the same session object
     response = session.get(link)
     
@@ -54,10 +65,6 @@ def scrape_organization_page(session, organization_name, link, keywords):
         
         # Check if the table exists
         if table:
-            # Print header with organization name
-            print(f"Organization: {organization_name}")
-            print("Filtered Data:")
-            
             # Iterate through rows in the table
             for row in table.find_all("tr"):
                 # Extract data from columns
@@ -81,17 +88,15 @@ def scrape_organization_page(session, organization_name, link, keywords):
                            keyword.lower() in organisation_chain.lower() for keyword in keywords):
                         
                         # Prepend the domain name to the title_ref_link
-                    
                         if not title_ref_link.startswith("http"):
                             title_ref_link = "https://etenders.gov.in" + title_ref_link
                         
-                        # Print the filtered data
-                        print(f"e-Published Date: {e_published_date} | Closing Date: {closing_date} | Opening Date: {opening_date} | Title/Ref.No./Tender ID: {title_ref} | Title/Ref.No./Tender ID Link: {title_ref_link} | Organisation Chain: {organisation_chain}")
-
-
+                        # Append the scraped data to the list
+                        data.append((organization_name, e_published_date, closing_date, opening_date, title_ref, title_ref_link, organisation_chain))
+    
+    return data
 
 # Call the function to scrape the website with multiple keywords for both pages
 keywords1 = ["ustan", "gail"]  # Keywords for the first page
 keywords2 = ["security", "services", "civil"]  # Keywords for the second page
 scrape_website(keywords1, keywords2)
-
