@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtered Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Filtered Data</h1>
+    {% for data in filtered_data %}
+    <h2>{{ data.Organization }}</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>e-Published Date</th>
+                <th>Closing Date</th>
+                <th>Opening Date</th>
+                <th>Title/Ref.No./Tender ID</th>
+                <th>Title/Ref.No./Tender ID Link</th>
+                <th>Organisation Chain</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data.Data %}
+            <tr>
+                <td>{{ row.e_published_date }}</td>
+                <td>{{ row.closing_date }}</td>
+                <td>{{ row.opening_date }}</td>
+                <td>{{ row.title_ref }}</td>
+                <td><a href="{{ row.title_ref_link }}" target="_blank">{{ row.title_ref_link }}</a></td>
+                <td>{{ row.organisation_chain }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+</body>
+</html>
