@@ -41,12 +41,23 @@
                 <td>{{ row.closing_date }}</td>
                 <td>{{ row.opening_date }}</td>
                 <td>{{ row.title_ref }}</td>
-                <td><a href="{{ row.title_ref_link }}" target="_blank">{{ row.title_ref_link }}</a></td>
+                <!-- Modify this line to include JavaScript function -->
+                <td><a href="javascript:void(0)" onclick="visitTenderPage('{{ row.title_ref_link }}')">Redirect to Tender Page</a></td>
                 <td>{{ row.organisation_chain }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% endfor %}
+
+    <!-- JavaScript function -->
+    <script>
+    function visitTenderPage(tenderLink) {
+        var homepageURL = "https://etenders.gov.in/eprocure/app";
+        
+        // Open the tender page in a new browser tab
+        window.open(homepageURL + "?redirectTo=" + encodeURIComponent(tenderLink), '_blank');
+    }
+    </script>
 </body>
 </html>
